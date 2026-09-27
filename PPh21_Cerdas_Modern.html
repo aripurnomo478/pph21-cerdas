@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PPh 21 Cerdas — Kalkulator TER</title>
+<style>
+:root{
+  --bg:#f4f7fb;
+  --surface:#ffffff;
+  --surface-2:#f8fafc;
+  --text:#172033;
+  --muted:#667085;
+  --line:#e4e7ec;
+  --accent:#175cd3;
+  --accent-2:#0b4dbb;
+  --soft:#eef4ff;
+  --success:#067647;
+  --success-bg:#ecfdf3;
+  --warning:#b54708;
+  --warning-bg:#fffaeb;
+  --shadow:0 8px 28px rgba(16,24,40,.07);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 90% 0%,rgba(23,92,211,.09),transparent 28%),
+    var(--bg);
+  color:var(--text);
+}
+button,input,select{font:inherit}
+button{touch-action:manipulation}
+.wrap{max-width:1120px;margin:auto;padding-left:18px;padding-right:18px}
+
+header{
+  background:linear-gradient(135deg,#123c91 0%,#175cd3 55%,#2e75df 100%);
+  color:#fff;
+  padding:28px 0 30px;
+  position:relative;
+  overflow:hidden;
+}
+header:after{
+  content:"";
+  position:absolute;
+  width:260px;height:260px;
+  right:-90px;top:-120px;
+  border-radius:50%;
+  background:rgba(255,255,255,.10);
+}
+.brand{font-size:30px;font-weight:850;letter-spacing:-.5px;position:relative;z-index:1}
+.sub{color:#dbeafe;margin-top:7px;font-size:14px;position:relative;z-index:1}
+.badge{
+  display:inline-flex;align-items:center;gap:7px;
+  margin-top:15px;padding:7px 11px;border-radius:999px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.2);
+  font-size:12px;font-weight:750;
+}
+
+nav{
+  background:rgba(255,255,255,.94);
+  border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:10;
+  backdrop-filter:blur(12px);
+}
+.tabs{
+  display:flex;gap:7px;overflow:auto;padding:9px 0;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex:0 0 auto;
+  border:1px solid transparent;
+  background:transparent;
+  padding:10px 14px;border-radius:11px;
+  cursor:pointer;font-weight:700;color:#475467;
+  transition:.18s ease;
+}
+.tab:hover{background:#f2f4f7}
+.tab.active{
+  background:var(--soft);
+  border-color:#d1e0ff;
+  color:var(--accent);
+}
+
+main{padding:24px 0 44px}
+.grid{display:grid;grid-template-columns:1.03fr .97fr;gap:18px}
+.card{
+  background:rgba(255,255,255,.96);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:21px;
+  box-shadow:var(--shadow);
+}
+.card h2{margin:0 0 16px;font-size:20px;letter-spacing:-.2px}
+.card h3{margin:20px 0 11px;font-size:16px}
+label{display:block;font-weight:700;margin:14px 0 7px;font-size:13px;color:#344054}
+input,select{
+  width:100%;padding:12px 13px;
+  border:1px solid #d0d5dd;border-radius:11px;
+  font-size:16px;background:#fff;color:var(--text);
+  outline:none;transition:.18s ease;
+}
+input:focus,select:focus{
+  border-color:#84adff;
+  box-shadow:0 0 0 4px rgba(23,92,211,.10);
+}
+input::placeholder{color:#98a2b3}
+
+button.primary{
+  margin-top:16px;width:100%;
+  padding:13px 16px;border:0;border-radius:11px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;font-weight:800;cursor:pointer;
+  box-shadow:0 7px 16px rgba(23,92,211,.22);
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+button.primary:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(23,92,211,.27)}
+button.primary:active{transform:translateY(0)}
+
+.result{
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:16px;margin-top:15px;
+}
+.result .big{
+  font-size:28px;font-weight:850;margin:6px 0 14px;
+  letter-spacing:-.5px;
+}
+.row{
+  display:flex;justify-content:space-between;gap:18px;
+  padding:10px 0;border-bottom:1px dashed #dfe3e8;
+}
+.row:last-child{border-bottom:0}
+.row span{color:#475467}
+.row b{color:#172033;text-align:right}
+.pill{
+  display:inline-flex;padding:6px 10px;border-radius:999px;
+  background:var(--soft);color:var(--accent);font-weight:850;
+  border:1px solid #d1e0ff;
+}
+.note{font-size:13px;color:var(--muted);line-height:1.55}
+.section{display:none}
+.section.active{display:block}
+.toolbar{display:grid;grid-template-columns:1fr 180px;gap:10px;margin-bottom:14px}
+
+.tablewrap{
+  overflow:auto;border:1px solid var(--line);
+  border-radius:13px;background:#fff;
+}
+table{border-collapse:collapse;width:100%;min-width:620px;background:#fff}
+th,td{
+  padding:11px 12px;border-bottom:1px solid #edf0f3;
+  text-align:right;white-space:nowrap;
+}
+th:first-child,td:first-child{text-align:center}
+th:nth-child(2),td:nth-child(2){text-align:left}
+th{
+  background:#f8fafc;color:#475467;
+  font-size:12px;text-transform:uppercase;letter-spacing:.03em;
+}
+tr:last-child td{border-bottom:0}
+.hit,.active-layer{background:var(--success-bg)!important;font-weight:800}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.mini{
+  padding:15px;border:1px solid var(--line);
+  border-radius:14px;background:#fff;
+  transition:.18s ease;
+}
+.mini:hover{border-color:#bfd3f7;transform:translateY(-1px)}
+.mini b{font-size:18px}
+.mini p{margin:7px 0 8px;color:#475467;font-size:14px}
+
+.yearbox{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}
+.monthgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:15px}
+.month{
+  border:1px solid var(--line);border-radius:13px;
+  padding:13px;background:#fff;
+}
+.month strong{display:block;margin-bottom:7px}
+.prog{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.progrow{display:flex;justify-content:space-between;padding:7px 0}
+.warn,.refund{
+  padding:13px;border-radius:12px;font-size:13px;line-height:1.55;
+}
+.warn{background:var(--warning-bg);border:1px solid #fedf89;color:#7a2e0b}
+.refund{background:#eff8ff;border:1px solid #b2ddff;color:#175cd3}
+.taxlayers{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.taxlayers table{min-width:520px}
+
+.footer{margin-top:22px;color:var(--muted);font-size:12px;line-height:1.6}
+
+@media(max-width:850px){
+  .grid{grid-template-columns:1fr}
+  .monthgrid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:650px){
+  .wrap{padding-left:14px;padding-right:14px}
+  header{padding:22px 0 24px}
+  .brand{font-size:25px}
+  .sub{font-size:13px}
+  main{padding:16px 0 32px}
+  .card{padding:16px;border-radius:15px}
+  .cards,.yearbox,.monthgrid{grid-template-columns:1fr}
+  .toolbar{grid-template-columns:1fr}
+  .row{align-items:flex-start}
+  .row b{max-width:55%}
+  .result .big{font-size:24px}
+}
+
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand">PPh 21 Cerdas</div><div class="sub">Kalkulator PPh Pasal 21 • TER A/B/C • Rekonsiliasi Tahunan</div><div class="badge">● Offline • Ramah Android • Perhitungan transparan</div></div></header>
+<nav><div class="wrap tabs">
+<button class="tab active" data-tab="calc">Kalkulator</button><button class="tab" data-tab="table">Tabel TER</button><button class="tab" data-tab="status">Status PTKP</button><button class="tab" data-tab="annual">Simulasi Tahunan</button><button class="tab" data-tab="guide">Panduan</button>
+</div></nav>
+<main class="wrap">
+<section id="calc" class="section active">
+<div class="grid">
+<div class="card"><h2>Hitung PPh 21 Masa Berjalan</h2>
+<label>Penghasilan bruto bulanan</label><input id="gross" inputmode="numeric" placeholder="Contoh: 10.000.000">
+<label>Status PTKP</label><select id="calcStatus">
+<option value="TK/0">TK/0 — Tidak kawin, 0 tanggungan</option><option value="TK/1">TK/1 — Tidak kawin, 1 tanggungan</option><option value="K/0">K/0 — Kawin, 0 tanggungan</option>
+<option value="TK/2">TK/2 — Tidak kawin, 2 tanggungan</option><option value="TK/3">TK/3 — Tidak kawin, 3 tanggungan</option><option value="K/1">K/1 — Kawin, 1 tanggungan</option><option value="K/2">K/2 — Kawin, 2 tanggungan</option><option value="K/3">K/3 — Kawin, 3 tanggungan</option>
+</select>
+<button class="primary" id="calcBtn">Hitung PPh 21</button>
+<div class="result" id="result"><div class="note">Masukkan bruto dan pilih status PTKP, lalu tekan Hitung.</div></div>
+</div>
+<div class="card"><h2>Kelompok TER</h2><div class="cards">
+<div class="mini"><b>TER A</b><p>TK/0, TK/1, K/0</p><span class="note">PTKP Rp54 jt–Rp58,5 jt</span></div>
+<div class="mini"><b>TER B</b><p>TK/2, TK/3, K/1, K/2</p><span class="note">PTKP Rp63 jt–Rp67,5 jt</span></div>
+<div class="mini"><b>TER C</b><p>K/3</p><span class="note">PTKP Rp72 jt</span></div>
+</div><div class="result"><b>TER harian</b><div class="row"><span>≤ Rp450.000</span><b>0%</b></div><div class="row"><span>&gt; Rp450.000 s.d. Rp2.500.000</span><b>0,5%</b></div></div></div>
+</div>
+<div class="card" style="margin-top:18px"><h2>Lapisan Tarif PPh 21 Pasal 17</h2><p class="note">Lapisan ini digunakan untuk menghitung PPh 21 tahunan pada masa pajak terakhir (misalnya Desember), bukan untuk menghitung TER bulanan.</p><div class="tablewrap"><table><thead><tr><th>Lapisan PKP</th><th>Tarif</th><th>Cara hitung</th></tr></thead><tbody><tr><td>Sampai Rp60.000.000</td><td>5%</td><td>Bagian PKP × 5%</td></tr><tr><td>&gt; Rp60.000.000 s.d. Rp250.000.000</td><td>15%</td><td>Bagian di atas Rp60 jt × 15%</td></tr><tr><td>&gt; Rp250.000.000 s.d. Rp500.000.000</td><td>25%</td><td>Bagian di atas Rp250 jt × 25%</td></tr><tr><td>&gt; Rp500.000.000 s.d. Rp5.000.000.000</td><td>30%</td><td>Bagian di atas Rp500 jt × 30%</td></tr><tr><td>&gt; Rp5.000.000.000</td><td>35%</td><td>Bagian di atas Rp5 M × 35%</td></tr></tbody></table></div></div></section>
+
+<section id="table" class="section"><div class="card"><h2>Tabel TER Resmi</h2>
+<div class="toolbar"><input id="search" placeholder="Cari nominal, kategori, atau tarif…"><select id="cat"><option value="ALL">Semua kategori</option><option>A</option><option>B</option><option>C</option></select></div>
+<div class="tablewrap"><table><thead><tr><th>No</th><th>Kategori</th><th>Penghasilan Bruto Bulanan</th><th>TER</th></tr></thead><tbody id="tbody"></tbody></table></div></div></section>
+
+<section id="status" class="section"><div class="card"><h2>Status PTKP dan Kategori TER</h2><div class="tablewrap"><table><thead><tr><th>Status</th><th>Keterangan</th><th>PTKP</th><th>Kategori</th></tr></thead><tbody>
+<tr><td>TK/0</td><td>Tidak kawin, 0 tanggungan</td><td>Rp54.000.000</td><td>A</td></tr><tr><td>TK/1</td><td>Tidak kawin, 1 tanggungan</td><td>Rp58.500.000</td><td>A</td></tr><tr><td>K/0</td><td>Kawin, 0 tanggungan</td><td>Rp58.500.000</td><td>A</td></tr>
+<tr><td>TK/2</td><td>Tidak kawin, 2 tanggungan</td><td>Rp63.000.000</td><td>B</td></tr><tr><td>K/1</td><td>Kawin, 1 tanggungan</td><td>Rp63.000.000</td><td>B</td></tr><tr><td>TK/3</td><td>Tidak kawin, 3 tanggungan</td><td>Rp67.500.000</td><td>B</td></tr><tr><td>K/2</td><td>Kawin, 2 tanggungan</td><td>Rp67.500.000</td><td>B</td></tr><tr><td>K/3</td><td>Kawin, 3 tanggungan</td><td>Rp72.000.000</td><td>C</td></tr>
+</tbody></table></div></div></section>
+
+
+<section id="annual" class="section"><div class="card"><h2>Simulasi Lengkap PPh 21 & Take-Home Pay</h2>
+<p class="note">Masukkan komponen penghasilan dan pengurang. Januari–November menggunakan TER atas bruto. Masa pajak terakhir melakukan rekonsiliasi PPh 21 setahun dengan tarif Pasal 17.</p>
+
+<div class="yearbox">
+<div><label>Status PTKP</label><select id="ys"><option value="TK/0">TK/0</option><option value="TK/1">TK/1</option><option value="K/0">K/0</option><option value="TK/2">TK/2</option><option value="TK/3">TK/3</option><option value="K/1">K/1</option><option value="K/2">K/2</option><option value="K/3">K/3</option></select></div>
+<div><label>Gaji/penghasilan bruto bulanan</label><input id="yg" inputmode="numeric" placeholder="10.000.000"></div>
+<div><label>Penghasilan bruto tidak teratur setahun</label><input id="ybonus" inputmode="numeric" placeholder="THR/bonus, jika ada"></div>
+</div>
+
+<h3>Pengurang untuk PPh 21 Tahunan</h3>
+<div class="yearbox">
+<div><label>Iuran pensiun / JP / JHT / THT pegawai per bulan</label><input id="ypension" inputmode="numeric" placeholder="0"></div>
+<div><label>Zakat/sumbangan keagamaan wajib per bulan melalui pemberi kerja</label><input id="yzakat" inputmode="numeric" placeholder="0"></div>
+<div><label>Biaya jabatan</label><select id="ybauto"><option value="auto">Otomatis 5%, maks. Rp6 juta/tahun</option><option value="manual">Masukkan manual</option></select><input id="yb" inputmode="numeric" placeholder="Manual biaya jabatan" disabled></div>
+</div>
+
+<h3>Potongan Gaji untuk Menghitung Take-Home Pay</h3>
+<div class="yearbox">
+<div><label>BPJS Kesehatan ditanggung pegawai per bulan</label><input id="yhealth" inputmode="numeric" placeholder="0"></div>
+<div><label>Potongan lain per bulan</label><input id="yother" inputmode="numeric" placeholder="0"></div>
+<div><label>Catatan</label><div class="note" style="padding-top:10px">Potongan payroll di sini tidak otomatis menjadi pengurang PPh 21 tahunan.</div></div>
+</div>
+
+<button class="primary" id="annualBtn">Hitung Simulasi Lengkap</button>
+<div id="annualResult"></div></div>
+
+<div class="card"><h2>Lapisan Tarif Progresif Pasal 17</h2><p class="note">Tarif bersifat progresif: setiap bagian PKP dikenai tarif sesuai lapisannya. Jadi bukan seluruh PKP dikalikan tarif lapisan tertinggi.</p><div class="tablewrap"><table><thead><tr><th>Lapisan PKP</th><th>Tarif</th><th>Bagian yang dikenai tarif</th></tr></thead><tbody>
+<tr><td>Sampai Rp60.000.000</td><td>5%</td><td>Rp0–Rp60 juta</td></tr><tr><td>&gt; Rp60.000.000 s.d. Rp250.000.000</td><td>15%</td><td>Bagian Rp60–Rp250 juta</td></tr><tr><td>&gt; Rp250.000.000 s.d. Rp500.000.000</td><td>25%</td><td>Bagian Rp250–Rp500 juta</td></tr><tr><td>&gt; Rp500.000.000 s.d. Rp5.000.000.000</td><td>30%</td><td>Bagian Rp500 juta–Rp5 miliar</td></tr><tr><td>&gt; Rp5.000.000.000</td><td>35%</td><td>Bagian di atas Rp5 miliar</td></tr>
+</tbody></table></div></div>
+
+<div class="card"><h2>Memahami "Pengurang"</h2>
+<div class="row"><span><b>Pengurang PPh 21 tahunan</b></span><span>Biaya jabatan + iuran pensiun/JP/JHT/THT pegawai + zakat/sumbangan keagamaan wajib melalui pemberi kerja</span></div>
+<div class="row"><span><b>Potongan take-home pay</b></span><span>PPh 21 + BPJS/potongan payroll lain yang benar-benar dipotong dari gaji</span></div>
+<p class="note">Untuk pegawai tetap, DJP menjelaskan bahwa penghasilan neto tahunan diperoleh dari bruto dikurangi biaya jabatan, iuran terkait program pensiun/hari tua, dan zakat/sumbangan keagamaan wajib yang dibayar melalui pemberi kerja. citeturn0search24</p>
+</div></section>
+<section id="guide" class="section"><div class="card"><h2>Panduan</h2>
+<p><b>Untuk pegawai tetap:</b> pada masa pajak selain masa pajak terakhir (umumnya Januari–November), PPh 21 dihitung dengan <b>penghasilan bruto bulan tersebut × TER bulanan</b>.</p>
+<p>Pada masa pajak terakhir, PPh 21 setahun dihitung dengan tarif Pasal 17 sesuai ketentuan, kemudian dikurangi PPh 21 yang telah dipotong pada masa sebelumnya.</p>
+<p><b>Catatan:</b> kalkulator ini adalah alat bantu edukasi dan verifikasi. Untuk pemotongan/pelaporan resmi, gunakan ketentuan DJP yang berlaku pada saat transaksi.</p>
+<p class="footer">Dasar rujukan: PP Nomor 58 Tahun 2023 dan PMK Nomor 168 Tahun 2023. Tarif TER A/B/C dan TER harian pada aplikasi mengikuti tabel yang dipublikasikan Direktorat Jenderal Pajak.</p>
+</div></section>
+</main>
+<script>
+const data={
+A:[
+[5400000,0],[5650000,.25],[5950000,.5],[6300000,.75],[6750000,1],[7500000,1.25],[8550000,1.5],[9650000,1.75],[10050000,2],[10350000,2.25],[10700000,2.5],[11050000,3],[11600000,3.5],[12500000,4],[13750000,5],[15100000,6],[16950000,7],[19750000,8],[24150000,9],[26450000,10],[28000000,11],[30050000,12],[32400000,13],[35400000,14],[39100000,15],[43850000,16],[47800000,17],[51400000,18],[56300000,19],[62200000,20],[68600000,21],[77500000,22],[89000000,23],[103000000,24],[125000000,25],[157000000,26],[206000000,27],[337000000,28],[454000000,29],[550000000,30],[695000000,31],[910000000,32],[1400000000,33],[Infinity,34]],
+B:[[6200000,0],[6500000,.25],[6850000,.5],[7300000,.75],[9200000,1],[10750000,1.5],[11250000,2],[11600000,2.5],[12600000,3],[13600000,4],[14950000,5],[16400000,6],[18450000,7],[21850000,8],[26000000,9],[27700000,10],[29350000,11],[31450000,12],[33950000,13],[37100000,14],[41100000,15],[45800000,16],[49500000,17],[53800000,18],[58500000,19],[64000000,20],[71000000,21],[80000000,22],[93000000,23],[109000000,24],[129000000,25],[163000000,26],[211000000,27],[374000000,28],[459000000,29],[555000000,30],[704000000,31],[957000000,32],[1405000000,33],[Infinity,34]],
+C:[[6600000,0],[6950000,.25],[7350000,.5],[7800000,.75],[8850000,1],[9800000,1.25],[10950000,1.5],[11200000,1.75],[12050000,2],[12950000,3],[14150000,4],[15550000,5],[17050000,6],[19500000,7],[22700000,8],[26600000,9],[28100000,10],[30100000,11],[32600000,12],[35400000,13],[38900000,14],[43000000,15],[47400000,16],[51200000,17],[55800000,18],[60400000,19],[66700000,20],[74500000,21],[83200000,22],[95600000,23],[110000000,24],[134000000,25],[169000000,26],[221000000,27],[390000000,28],[463000000,29],[561000000,30],[709000000,31],[965000000,32],[1419000000,33],[Infinity,34]]
+};
+const statusCat={'TK/0':'A','TK/1':'A','K/0':'A','TK/2':'B','TK/3':'B','K/1':'B','K/2':'B','K/3':'C'};
+const ptkp={'TK/0':54000000,'TK/1':58500000,'K/0':58500000,'TK/2':63000000,'TK/3':67500000,'K/1':63000000,'K/2':67500000,'K/3':72000000};
+function rup(n){return 'Rp'+Math.round(n).toLocaleString('id-ID')}
+function parseRup(s){return Number(String(s).replace(/[^\d]/g,''))||0}
+function rateFor(cat,g){let prev=0;for(let i=0;i<data[cat].length;i++){const [max,r]=data[cat][i];if(g<=max)return {rate:r,min:prev+1,max,index:i};prev=max}return null}
+function rangeText(cat,i){let prev=i?data[cat][i-1][0]:0,max=data[cat][i][0];if(!isFinite(max))return 'lebih dari '+rup(prev);return i===0?'sampai dengan '+rup(max):rup(prev+1)+' s.d. '+rup(max)}
+function renderTable(){const q=document.getElementById('search').value.toLowerCase();const c=document.getElementById('cat').value;let out='';for(const cat of ['A','B','C']){if(c!=='ALL'&&c!==cat)continue;data[cat].forEach((x,i)=>{const txt=(cat+' '+rangeText(cat,i)+' '+x[1]+'%').toLowerCase();if(q&&!txt.includes(q))return;out+=`<tr><td>${i+1}</td><td>TER ${cat}</td><td>${rangeText(cat,i)}</td><td>${x[1].toLocaleString('id-ID')}%</td></tr>`})}document.getElementById('tbody').innerHTML=out||'<tr><td colspan="4">Tidak ditemukan</td></tr>'}
+document.getElementById('gross').addEventListener('input',e=>{let n=parseRup(e.target.value);e.target.value=n?n.toLocaleString('id-ID'):''})
+document.getElementById('calcBtn').onclick=()=>{const g=parseRup(document.getElementById('gross').value),s=document.getElementById('calcStatus').value;if(!g){document.getElementById('result').innerHTML='<div class="note">Masukkan penghasilan bruto terlebih dahulu.</div>';return}const c=statusCat[s],r=rateFor(c,g),tax=g*r.rate/100;const range=rangeText(c,r.index);document.getElementById('result').innerHTML=`<div class="note">Kategori yang berlaku</div><div class="big"><span class="pill">TER ${c} · ${r.rate}%</span></div><div class="row"><span>Status PTKP</span><b>${s}</b></div><div class="row"><span>Bruto bulan ini</span><b>${rup(g)}</b></div><div class="row"><span>Lapisan bruto TER ${c}</span><b>${range}</b></div><div class="row"><span>Tarif TER</span><b>${r.rate}%</b></div><div class="row"><span>PPh 21 bulan ini</span><b>${rup(tax)}</b></div><p class="note">Rumus TER: ${rup(g)} × ${r.rate}% = ${rup(tax)}. Lapisan Pasal 17 dipakai saat menghitung masa pajak terakhir.</p>`}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));b.classList.add('active');const target=document.querySelector('.section[id=\"'+b.dataset.tab+'\"]');if(target)target.classList.add('active')})
+document.getElementById('search').oninput=renderTable;document.getElementById('cat').onchange=renderTable;renderTable();
+
+const progLayers=[{label:'Sampai Rp60.000.000',limit:60000000,rate:.05},{label:'> Rp60.000.000 s.d. Rp250.000.000',limit:250000000,rate:.15},{label:'> Rp250.000.000 s.d. Rp500.000.000',limit:500000000,rate:.25},{label:'> Rp500.000.000 s.d. Rp5.000.000.000',limit:5000000000,rate:.30},{label:'> Rp5.000.000.000',limit:Infinity,rate:.35}];
+function progBreakdown(pkp){let prev=0,total=0,rows=[];for(const L of progLayers){const taxable=Math.max(0,Math.min(pkp,L.limit)-prev);const tax=taxable*L.rate;rows.push({...L,prev,taxable,tax,active:taxable>0});total+=tax;if(pkp<=L.limit)break;prev=L.limit}return {total,rows}}
+function progTax(pkp){return progBreakdown(pkp).total}
+function progTableHtml(pkp){const b=progBreakdown(pkp);let html='<div class="taxlayers"><h3>Rincian Lapisan Pasal 17</h3><p class="note">PKP '+rup(pkp)+' dibagi ke dalam lapisan berikut. Hanya bagian yang masuk lapisan yang dikenai tarif lapisan tersebut.</p><div class="tablewrap"><table><thead><tr><th>Lapisan</th><th>Tarif</th><th>Bagian PKP</th><th>PPh</th></tr></thead><tbody>';for(const r of b.rows){html+=`<tr class="${r.active?'active-layer':''}"><td style="text-align:left">${r.label}</td><td>${(r.rate*100).toLocaleString('id-ID')}%</td><td>${rup(r.taxable)}</td><td>${rup(r.tax)}</td></tr>`}html+='</tbody></table></div></div>';return html}
+function annualCalc(){
+const g=parseRup(document.getElementById('yg').value), bonus=parseRup(document.getElementById('ybonus').value);
+const s=document.getElementById('ys').value, pension=parseRup(document.getElementById('ypension').value), zakat=parseRup(document.getElementById('yzakat').value);
+const health=parseRup(document.getElementById('yhealth').value), other=parseRup(document.getElementById('yother').value);
+const mode=document.getElementById('ybauto').value, manualB=parseRup(document.getElementById('yb').value);
+if(!g){document.getElementById('annualResult').innerHTML='<div class="warn">Masukkan gaji/penghasilan bruto bulanan terlebih dahulu.</div>';return}
+const cat=statusCat[s], monthly=g, r=rateFor(cat,monthly);
+const monthlyTax=g*r.rate/100, grossRegular=g*12, grossYear=grossRegular+bonus;
+const jobAuto=Math.min(grossYear*.05,6000000), job=mode==='auto'?jobAuto:Math.min(manualB,6000000);
+const pensionYear=pension*12, zakatYear=zakat*12;
+const netTax=Math.max(0,grossYear-job-pensionYear-zakatYear);
+const pkp=Math.floor(Math.max(0,netTax-ptkp[s])/1000)*1000;
+const annualTax=progTax(pkp);
+const janNov=monthlyTax*11;
+const dec=annualTax-janNov;
+const totalTax=janNov+dec;
+const takeRegular=Math.max(0,g-monthlyTax-pension-health-other);
+const takeDec=g-dec-pension-health-other;
+let months='';for(let i=1;i<=11;i++)months+=`<div class="month"><strong>${['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov'][i-1]}</strong><span class="note">TER ${cat} ${r.rate}%</span><br><b>PPh ${rup(monthlyTax)}</b><br><span class="note">THP ${rup(takeRegular)}</span></div>`;
+months+=`<div class="month"><strong>Des</strong><span class="note">Rekonsiliasi Pasal 17</span><br><b>${dec>=0?'PPh':'Koreksi'} ${rup(Math.abs(dec))}</b><br><span class="note">THP ${rup(takeDec)}</span></div>`;
+const reconciliation=dec<0?`<div class="refund">Pemotongan Jan–Nov lebih besar daripada PPh 21 setahun sebesar <b>${rup(Math.abs(dec))}</b>. Nilai Desember menjadi negatif sebagai koreksi/pengembalian ke pegawai, bukan tambahan pajak.</div>`:'';
+document.getElementById('annualResult').innerHTML=`
+<div class="result">
+<div class="row"><span>Kategori TER</span><b>TER ${cat} — ${r.rate}%</b></div>
+<div class="row"><span>Bruto reguler setahun</span><b>${rup(grossRegular)}</b></div>
+<div class="row"><span>Bruto tidak teratur</span><b>${rup(bonus)}</b></div>
+<div class="row"><span><b>Total bruto setahun</b></span><b>${rup(grossYear)}</b></div>
+<div class="row"><span>Biaya jabatan</span><b>${rup(job)}</b></div>
+<div class="row"><span>Iuran pensiun/JP/JHT/THT pegawai</span><b>${rup(pensionYear)}</b></div>
+<div class="row"><span>Zakat/sumbangan wajib melalui pemberi kerja</span><b>${rup(zakatYear)}</b></div>
+<div class="row"><span>Penghasilan neto untuk PPh</span><b>${rup(netTax)}</b></div>
+<div class="row"><span>PTKP ${s}</span><b>${rup(ptkp[s])}</b></div>
+<div class="row"><span>PKP (dibulatkan ke bawah ribuan)</span><b>${rup(pkp)}</b></div>
+<div class="row"><span><b>PPh 21 setahun</b></span><b>${rup(annualTax)}</b></div>
+<div class="row"><span>PPh 21 Jan–Nov</span><b>${rup(janNov)}</b></div>
+<div class="row"><span><b>PPh 21 Desember</b></span><b>${rup(dec)}</b></div>
+<div class="row"><span>Total PPh 21</span><b>${rup(totalTax)}</b></div>
+</div>${progTableHtml(pkp)}${reconciliation}
+<div class="monthgrid">${months}</div>
+<div class="result">
+<h3>Take-Home Pay</h3>
+<div class="row"><span>Bruto bulanan</span><b>${rup(g)}</b></div>
+<div class="row"><span>PPh 21 Jan–Nov</span><b>- ${rup(monthlyTax)}</b></div>
+<div class="row"><span>Iuran pensiun/JP/JHT/THT</span><b>- ${rup(pension)}</b></div>
+<div class="row"><span>BPJS Kesehatan pegawai</span><b>- ${rup(health)}</b></div>
+<div class="row"><span>Potongan lain</span><b>- ${rup(other)}</b></div>
+<div class="row"><span><b>THP Jan–Nov</b></span><b>${rup(takeRegular)}</b></div>
+<div class="row"><span>PPh 21 Desember / koreksi</span><b>${dec>=0?'- ': '+ '}${rup(Math.abs(dec))}</b></div>
+<div class="row"><span><b>THP Desember</b></span><b>${rup(takeDec)}</b></div>
+</div>
+<p class="note">Rumus masa pajak terakhir: PPh 21 setahun − PPh 21 yang telah dipotong Jan–Nov. Jika hasilnya negatif, artinya telah terjadi pemotongan lebih besar dan diperlukan koreksi/pengembalian. THP adalah simulasi kas setelah PPh 21 dan potongan pegawai yang Anda input.</p>`;
+}
+
+document.getElementById('ybauto').onchange=()=>{const m=document.getElementById('ybauto').value;document.getElementById('yb').disabled=m!=='manual'};
+document.getElementById('annualBtn').onclick=annualCalc;
+</script>
+</body></html>
